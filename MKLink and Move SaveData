@@ -1,0 +1,89 @@
+@echo off
+setlocal enabledelayedexpansion
+
+REM Prompt the user for the A path
+set /p APath=請輸入遊戲存檔路徑:
+
+REM Set the B path (current directory)
+set "BPath=%cd%"
+
+REM 使用 for 解析遊戲路徑
+for %%a in ("%APath%") do (
+    for %%b in ("%%~dpa.") do (
+        for %%c in ("%%~dpb.") do (
+            set "A1st=%%~nxc"
+            set "A2nd=%%~nxb"
+            set "LastFolder=%%~nxa"
+        )
+    )
+)
+
+REM Show the paths to the user
+echo 遊戲存檔路徑: %APath%
+echo 移動的資料夾: %LastFolder%
+echo 新存檔路徑: %BPath%
+
+echo A1st: %A1st%
+echo A2nd: %A2nd%
+echo LastFolder: %LastFolder%
+
+
+echo 1.移動存檔資料夾到新位置,並且建立新的資料夾
+echo 2.只移動和連結存檔資料夾到新位置
+echo 3.僅連結存檔資料夾到新位置,並刪除該資料夾
+set /p "choice=請選擇項目："
+
+if /i "%choice%"=="1" (
+    echo 你選擇了1
+    set /p "confirm_create=是否要創建資料夾 %A2nd% 在 %BPath%？(Y/Enter): "
+
+    REM Create the corresponding folder structure
+    if not exist "%BPath%\!A2nd!" (
+        md "%BPath%\!A2nd!"
+        echo 資料夾 %A2nd% 已創建。
+    )
+
+    
+
+    echo 正在移動 %LastFolder% 到 %BPath%...
+    xcopy "%APath%" "%BPath%\%A2nd%\%LastFolder%" /e /i /h /k /y
+    if not errorlevel 1 (
+        rd /s /q "%APath%"
+        echo 移動成功。
+        set "BPath=%BPath%\%A2nd%\%LastFolder%"
+    ) else (
+        echo 移動失敗。
+        goto :end
+    )
+
+) else if /i "%choice%"=="2" (
+    echo 你選擇了 2
+    echo 正在移動 %LastFolder% 到 %BPath%...
+    xcopy "%APath%" "%BPath%\%LastFolder%" /e /i /h /k /y
+    if not errorlevel 1 (
+        rd /s /q "%APath%"
+        echo 移動成功。
+        set "BPath=%BPath%\%LastFolder%"
+    ) else (
+        echo 移動失敗。
+        goto :end
+    )
+
+) else if /i "%choice%"=="3" (
+    echo 你選擇了 3
+    echo 將刪除資料夾 %LastFolder%...
+    rd /s /q "%APath%"
+    echo 資料夾 %LastFolder% 已刪除。
+)
+
+REM Confirm with the user to create symbolic link
+set /p "confirm_symlink=是否要創建符號鏈接？(Y/Enter): "
+if /i "%confirm_symlink%" neq "Y" if not "%confirm_symlink%"=="" goto :end
+
+REM Create the symbolic link
+cmd.exe /c mklink /D "%APath%" "%BPath%"
+
+:end
+echo 完成。
+pause
+endlocal
