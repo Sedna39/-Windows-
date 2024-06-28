@@ -11,7 +11,7 @@
   - 2.直接把存檔資料夾搬到新地方，然後連結(MKLink) 
   - 3.把存檔資料夾刪除，然後連結(MKLink)
 
-4. MKLink過後不會影響程式的抓取動作，本來程式在"C:\Users\Hahaha\AppData\Local\KOGADO\save"抓資料，
-   因為有MKLink會變成C:\Users\Hahaha\AppData\Local\KOGADO\  "save"⮕(C:\Galgames\Main SaveData\KOGADO\save)抓取。
+MKLink過後不會影響程式的抓取動作，本來程式在"C:\Users\Hahaha\AppData\Local\KOGADO\save"抓資料，
+因為有MKLink會變成C:\Users\Hahaha\AppData\Local\KOGADO\  "save"⮕(C:\Galgames\Main SaveData\KOGADO\save)抓取。
 
 搭配雲端備份就可以跨裝置遊玩了!
